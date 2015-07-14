@@ -5,13 +5,11 @@ elasticsearch:
     - "9200:9200"
 
 kibana:
-  image: mikew/kibana4
+  image: kibana
   ports:
     - "5601:5601"
   links:
     - elasticsearch
-  environment:
-    ES_URL: "http://elasticsearch:9200/"
 
 logstash:
   image: logstash

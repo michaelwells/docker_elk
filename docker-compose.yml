@@ -1,18 +1,21 @@
 ---
 elasticsearch:
-  image: elasticsearch
+  image: elasticsearch:2
   ports:
     - "9200:9200"
+  command: -Des.network.host=0.0.0.0 # command is required to make ES bind to all network interfaces rather than just localhost inside the container
 
 kibana:
-  image: kibana
+  image: kibana:4.2
   ports:
     - "5601:5601"
   links:
     - elasticsearch
 
 logstash:
-  image: logstash
+  image: logstash:2
   links:
     - elasticsearch
-  command: "logstash -e \"input { file { path => '/var/log/messages' } } output { elasticsearch { host=> 'elasticsearch' port=> '9200' protocol=> 'http' } }\""
+  ports:
+    - "9876:9876"
+  command: "logstash -e \"input { tcp { port => '9876' } } output { elasticsearch { hosts=> 'elasticsearch:9200' } }\""
